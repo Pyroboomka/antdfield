@@ -1,6 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-
+### Todo
+Made this installable package. But I don't know how to do this :)
 ### Why?
 Because formik is nice, and I got tired of rc-form.
 ### How?
