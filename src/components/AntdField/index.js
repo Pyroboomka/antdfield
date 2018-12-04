@@ -1,69 +1,38 @@
 import React from 'react'
 import { Field } from 'formik'
-import { Input, Form, Checkbox, Select, TreeSelect } from 'antd'
-
-const FormItem = Form.Item
-const CheckboxGroup = Checkbox.Group
-
-/**
- * To support default antd behavior with key/value, leave this ternary here.
- */
-const getSelectOption = ({ key, value, title }) => (
-  <Select.Option key={key ? String(key) : String(value)} title={title || value}>
-    {title}
-  </Select.Option>
-)
+import { Input, Form } from 'antd'
 
 export const FormItemWrapper = ({
   field,
-  form: { touched, errors, setFieldValue, setFieldTouched },
+  form: { touched, errors },
   element = <Input />,
-  required,
   hidden,
-  label,
   layout,
-  options,
-  title,
   onChange: _onChange,
   onBlur: _onBlur,
+  ...rest
 }) => {
-  let jsx = element
-  if (hidden) {
-    // Hidden input
-    return <Input {...field} type="hidden" />
-  }
-  // Support default elements of antd
-  if (element === 'select') {
-    jsx = (
-      <Select>
-        {options.map(getSelectOption)}
-      </Select>
-    )
-    _onChange = (value, option) => setFieldValue(field.name, value)
-  }
-  if (element === 'checkbox') {
-    jsx = (
-      <Checkbox checked={field.value}>
-        {title}
-      </Checkbox>
-    )
-  }
-  if (element === 'checkboxGroup') {
-    jsx = (<CheckboxGroup options={options}/>)
-    _onChange = (values) => setFieldValue(field.name, values)
-  }
-  // Inject formik props + override handlers if provided.
+  if (hidden) return <Input {...field} type="hidden" />
+  /* Override Formik handlers, if custom ones were provided */
   const withCustomHandlers = {
     ...field,
     onChange: _onChange ? _onChange : field.onChange,
     onBlur: _onBlur ? _onBlur : field.onBlur,
   }
-  const WithProps = React.cloneElement(jsx, { ...withCustomHandlers })
-  const errorMsg = touched[field.name] && errors[field.name]
+  /* Inject these into passed element */
+  const withFormikProps = React.cloneElement(element, { ...withCustomHandlers })
+  /* Compose props for Form.Item */
+  const help = touched[field.name] && errors[field.name]
+  const formItemProps = {
+    help,
+    validateStatus: help ? 'error': '',
+    ...layout,
+    ...rest,
+  }
   return (
-    <FormItem required={required} help={errorMsg} validateStatus={errorMsg ? 'error' : ''} label={label} {...layout} >
-      {WithProps}
-    </FormItem>
+    <Form.Item {...formItemProps}>
+      {withFormikProps}
+    </Form.Item>
   )
 }
 

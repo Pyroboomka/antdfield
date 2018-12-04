@@ -1,19 +1,19 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
-import { action } from '@storybook/addon-actions'
 import { AntdField } from '../components/AntdField'
+import { FieldArray } from 'formik'
+import { Select, Input, Button } from 'antd'
 /**
  * Form Wrapper to show that stuff actually works.
  */
 import FormContainer from './FormContainer'
 
-const formSubmitAction = action('onClick')
 // { skip: 1 } to disable form JSX.
 storiesOf('AntdField', module)
   .addWithJSX(
     'Default input',
     () => (
-      <FormContainer movie={{ title: 'The Avengers' }} formSubmitAction={formSubmitAction}>
+      <FormContainer movie={{ title: 'The Avengers' }}>
         <AntdField label="Input" name="title" required />
       </FormContainer>
     ),
@@ -22,44 +22,73 @@ storiesOf('AntdField', module)
   .addWithJSX(
     'Hidden value',
     () => (
-      <FormContainer movie={{ title: 'The Avengers' }} formSubmitAction={formSubmitAction}>
+      <FormContainer movie={{ title: "Can not see me, but I'm present" }}>
         <AntdField name="title" hidden />
       </FormContainer>
     ),
     { skip: 1 }
   )
   .addWithJSX(
-    'Select',
+    'Custom element',
     () => (
-      <FormContainer movie={{ movie: 'aac' }} formSubmitAction={formSubmitAction}>
+      <FormContainer movie={{ movie: 'aac' }}>
         <AntdField
           name="movie"
-          label="Select a movie"
-          element="select"
-          options={[
-            { value: 'aab', title: 'The Avengers' },
-            { value: 'aac', title: 'The Iron Man' },
-            { value: 'aad', title: 'Spider Man' },
-          ]}
+          label="Select your favourite Marvel movie"
+          element={
+            <Select style={{ width: '100%' }}>
+              <Select.Option key="aaa" title="The Avengers">
+                {'The Avengers'}
+              </Select.Option>
+              <Select.Option key="aab" title="The Iron Man">
+                {'The Iron Man'}
+              </Select.Option>
+              <Select.Option key="aac" title="Spider Man">
+                {'Spider Man'}
+              </Select.Option>
+            </Select>
+          }
+          // This won't work, since I'm rebinding onChange for storybook purposes in FormContainer.
+          // onChange={(value) => { this.props.setFieldValue('movie', value) }}
+          onChange={function(value) {
+            this.props.setFieldValue('movie', value)
+          }}
         />
       </FormContainer>
     ),
     { skip: 1 }
   )
   .addWithJSX(
-    'Checkbox',
+    'Array Fields',
     () => (
-      <FormContainer movie={{ hasSurvived: true }} formSubmitAction={formSubmitAction}>
-        <AntdField name="hasSurvived" element="checkbox" title={'Have your survived Thanos purge?'} />
-      </FormContainer>
-    ),
-    { skip: 1 }
-  )
-  .addWithJSX(
-    'Checkbox Group',
-    () => (
-      <FormContainer movie={{ listOfOptions: ['Or me'] }} formSubmitAction={formSubmitAction}>
-        <AntdField name="listOfOptions" element="checkboxGroup" options={['Tick me', 'Or me', 'Just tick me already!']} />
+      <FormContainer movie={{ movies: [{ title: 'Iron Man' }, { title: 'Thor' }, { title: 'Doctor Strange' }] }}>
+        <FieldArray
+          name="movies"
+          label="Fill your favourite Marvel movies"
+          // Same, you can use arrow function in actual code.
+          render={function(arrayHelpers) {
+            const { movies } = this.props.values
+            return movies.length && movies.length > 0 ? (
+              <div>
+                {movies.map((movie, index) => (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <AntdField label="Movie title" name={`movies[${index}].title`} element={<Input />} />
+                    <Button shape="circle" icon="minus" onClick={() => arrayHelpers.remove(index)} />
+                  </div>
+                ))}
+                <Button type="primary" onClick={() => { arrayHelpers.push({ title: '' }) }}>
+                  Add a movie.
+                </Button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button type="submit" onClick={() => {arrayHelpers.push({ title: '' }) }}>
+                  Add a movie.
+                </Button>
+              </div>
+            )
+          }}
+        />
       </FormContainer>
     ),
     { skip: 1 }

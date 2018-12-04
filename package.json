@@ -1,6 +1,6 @@
 {
   "name": "antd-formik",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "antd": "^3.10.9",
@@ -29,6 +29,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.1.0",
+    "@babel/plugin-syntax-json-strings": "^7.2.0",
     "@storybook/addon-actions": "^4.0.11",
     "@storybook/addon-links": "^4.0.11",
     "@storybook/react": "^4.0.11",
