@@ -7,6 +7,7 @@ import { Select, Input, Button } from 'antd'
  * Form Wrapper to show that stuff actually works.
  */
 import FormContainer from './FormContainer'
+import SampleForm from './SampleForm';
 
 // { skip: 1 } to disable form JSX.
 storiesOf('AntdField', module)
@@ -93,3 +94,6 @@ storiesOf('AntdField', module)
     ),
     { skip: 1 }
   )
+
+storiesOf('Example Form', module)
+  .addWithJSX('Avengers supported application', () => <SampleForm />)

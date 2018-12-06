@@ -1,5 +1,5 @@
 import React from 'react'
-import { Field } from 'formik'
+import { Field, getIn } from 'formik'
 import { Input, Form } from 'antd'
 
 export const FormItemWrapper = ({
@@ -22,7 +22,7 @@ export const FormItemWrapper = ({
   /* Inject these into passed element */
   const withFormikProps = React.cloneElement(element, { ...withCustomHandlers })
   /* Compose props for Form.Item */
-  const help = touched[field.name] && errors[field.name]
+  const help = getIn(touched, field.name) && getIn(errors, field.name)
   const formItemProps = {
     help,
     validateStatus: help ? 'error': '',

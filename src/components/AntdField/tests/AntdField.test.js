@@ -14,6 +14,8 @@ describe('<AntdField />', () => {
 })
 
 describe('<FormItemWrapper />', () => {
+  // Maybe mount these fields and actually check INJECTED props, not these mocks?
+  // Dunno how to do this.
   const injectedFormikProps = {
     field: {
       name: 'id',
